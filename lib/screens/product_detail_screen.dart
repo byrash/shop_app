@@ -9,7 +9,7 @@ class ProductDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productId = ModalRoute.of(context)!.settings.arguments as String;
-    var product = Provider.of<Products>(
+    final product = Provider.of<Products>(
       context,
       listen: false, // Only listen once
     ).findById(productId);

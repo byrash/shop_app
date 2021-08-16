@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/products_grid.dart';
 
-import '../models/product.dart';
+import '../providers/product.dart';
 
 class ProductsOverview extends StatelessWidget {
   ProductsOverview({Key? key}) : super(key: key);

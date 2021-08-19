@@ -13,7 +13,7 @@ class AppDrawer extends StatelessWidget {
             title: const Text("Hello Friend!"),
             automaticallyImplyLeading: false,
           ),
-          Divider(),
+          const Divider(),
           ListTile(
             leading: const Icon(
               Icons.shop,
@@ -23,7 +23,7 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context).pushReplacementNamed("/");
             },
           ),
-          Divider(),
+          const Divider(),
           ListTile(
             leading: const Icon(
               Icons.payment,

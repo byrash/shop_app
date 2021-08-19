@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/providers/cart.dart' show Cart;
+import 'package:shop_app/widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeContextPath = "/cart";
@@ -8,6 +9,7 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var cartData = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Your Cart"),
@@ -21,21 +23,19 @@ class CartScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     "Total",
                     style: TextStyle(fontSize: 20),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Chip(
-                    label: Consumer<Cart>(
-                      builder: (context, value, child) => Text(
-                        "\$${value.totalAmount}",
-                        style: TextStyle(
-                            color: Theme.of(context)
-                                .primaryTextTheme
-                                .headline6!
-                                .color),
-                      ),
+                    label: Text(
+                      "\$${cartData.totalAmount}",
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .primaryTextTheme
+                              .headline6!
+                              .color),
                     ),
                     backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
@@ -46,11 +46,28 @@ class CartScreen extends StatelessWidget {
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           ),
+          SizedBox(
+            height: 10,
+          ),
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return CartItem(
+                  id: cartData.items.values.toList()[index].id,
+                  price: cartData.items.values.toList()[index].price,
+                  quantity: cartData.items.values.toList()[index].quantity,
+                  title: cartData.items.values.toList()[index].title,
+                );
+              },
+              itemCount: cartData.itemCount,
+            ),
+          )
         ],
       ),
     );

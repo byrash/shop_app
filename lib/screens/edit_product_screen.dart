@@ -34,12 +34,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
       if (_imageUrlController.text.isEmpty) {
         return;
       }
-      if (!_imageUrlController.text.startsWith("http") ||
+      if (!_imageUrlController.text.startsWith("http") &&
           !_imageUrlController.text.startsWith("https")) {
         return;
       }
-      if (!_imageUrlController.text.endsWith(".png") ||
-          !_imageUrlController.text.endsWith(".jpg") ||
+      if (!_imageUrlController.text.endsWith(".png") &&
+          !_imageUrlController.text.endsWith(".jpg") &&
           !_imageUrlController.text.endsWith(".jpeg")) {
         return;
       }
@@ -193,12 +193,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         if (value!.isEmpty) {
                           return "Please provide an image URL.";
                         }
-                        if (!value.startsWith("http") ||
+                        if (!value.startsWith("http") &&
                             !value.startsWith("https")) {
                           return "Please provide a valid image URL.";
                         }
-                        if (!value.endsWith(".png") ||
-                            !value.endsWith(".jpg") ||
+                        if (!value.endsWith(".png") &&
+                            !value.endsWith(".jpg") &&
                             !value.endsWith(".jpeg")) {
                           return "Please provide a valid image URL.";
                         }

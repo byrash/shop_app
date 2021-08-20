@@ -31,6 +31,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imgUrlFocusNode.hasFocus) {
+      if (_imageUrlController.text.isEmpty) {
+        return;
+      }
+      if (!_imageUrlController.text.startsWith("http") ||
+          !_imageUrlController.text.startsWith("https")) {
+        return;
+      }
+      if (!_imageUrlController.text.endsWith(".png") ||
+          !_imageUrlController.text.endsWith(".jpg") ||
+          !_imageUrlController.text.endsWith(".jpeg")) {
+        return;
+      }
       setState(() {});
     }
   }
@@ -180,6 +192,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       validator: (value) {
                         if (value!.isEmpty) {
                           return "Please provide an image URL.";
+                        }
+                        if (!value.startsWith("http") ||
+                            !value.startsWith("https")) {
+                          return "Please provide a valid image URL.";
+                        }
+                        if (!value.endsWith(".png") ||
+                            !value.endsWith(".jpg") ||
+                            !value.endsWith(".jpeg")) {
+                          return "Please provide a valid image URL.";
                         }
                         return null;
                       },

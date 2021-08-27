@@ -9,7 +9,7 @@ import 'product.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Products with ChangeNotifier {
-  final productsFireBaseUrl =
+  final productsFireBaseProductsUrl =
       Uri.https(dotenv.env['FIREBASEURL']!, "/products.json");
   List<Product> _items = [
     // Product(
@@ -60,7 +60,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndSetProducts() async {
     try {
-      var resp = await http.get(productsFireBaseUrl);
+      var resp = await http.get(productsFireBaseProductsUrl);
       var bodyData = json.decode(resp.body) as Map<String, dynamic>;
       _items.clear();
       bodyData.forEach((key, value) {
@@ -79,7 +79,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     try {
-      final resp = await http.post(productsFireBaseUrl,
+      final resp = await http.post(productsFireBaseProductsUrl,
           body: json.encode({
             "title": product.title,
             "description": product.description,
@@ -102,9 +102,23 @@ class Products with ChangeNotifier {
     }
   }
 
-  Future<void> updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
+      final productsFireBasePatchUrl =
+          Uri.https(dotenv.env['FIREBASEURL']!, "/products/$id.json");
+      try {
+        await http.patch(productsFireBasePatchUrl,
+            body: json.encode({
+              "title": newProduct.title,
+              "description": newProduct.description,
+              "price": newProduct.price,
+              "imageUrl": newProduct.imageUrl,
+            }));
+      } catch (error) {
+        print(error);
+        rethrow;
+      }
       _items[prodIndex] = newProduct;
       notifyListeners();
     }

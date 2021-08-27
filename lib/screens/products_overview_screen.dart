@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/cart.dart';
+import 'package:shop_app/providers/products.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/badge.dart';
@@ -21,6 +22,24 @@ class ProductsOverview extends StatefulWidget {
 
 class _ProductsOverviewState extends State<ProductsOverview> {
   bool _showOnlyFavs = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<Products>(context, listen: false).fetchAndSetProducts().then(
+      (value) {
+        setState(() {
+          _isLoading = false;
+        });
+      },
+    );
+    // Provider.of<Products>(context).fetchAndSetProducts(); //This wont
+    // Future.delayed(Duration.zero).then((value) {
+    //   Provider.of<Products>(context).fetchAndSetProducts();
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,10 +86,12 @@ class _ProductsOverviewState extends State<ProductsOverview> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: ProductsGrid(
-        key: UniqueKey(),
-        showOnlyFavs: _showOnlyFavs,
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ProductsGrid(
+              key: UniqueKey(),
+              showOnlyFavs: _showOnlyFavs,
+            ),
     );
   }
 }

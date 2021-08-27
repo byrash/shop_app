@@ -125,9 +125,17 @@ class Products with ChangeNotifier {
     return Future.value();
   }
 
-  void deleteProduct(String id) {
+  Future<void> deleteProduct(String id) async {
+    final productsFireBasePatchUrl =
+        Uri.https(dotenv.env['FIREBASEURL']!, "/products/$id.json");
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
+      try {
+        await http.delete(productsFireBasePatchUrl);
+      } catch (error) {
+        print(error);
+        rethrow;
+      }
       _items.removeAt(prodIndex);
       notifyListeners();
     }

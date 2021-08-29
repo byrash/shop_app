@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -17,8 +21,18 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus() {
+  Future<void> toggleFavoriteStatus() async {
     isFavorite = !isFavorite;
-    notifyListeners();
+    final productsFireBasePatchUrl =
+        Uri.https(dotenv.env['FIREBASEURL']!, "/products/$id.json");
+    try {
+      await patch(productsFireBasePatchUrl,
+          body: json.encode({
+            'isFavorite': isFavorite,
+          }));
+      notifyListeners();
+    } catch (error) {
+      rethrow;
+    }
   }
 }

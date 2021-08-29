@@ -65,11 +65,13 @@ class Products with ChangeNotifier {
       _items.clear();
       bodyData.forEach((key, value) {
         _items.add(Product(
-            id: key,
-            title: value["title"],
-            description: value["description"],
-            price: value["price"],
-            imageUrl: value["imageUrl"]));
+          id: key,
+          title: value["title"],
+          description: value["description"],
+          price: value["price"],
+          isFavorite: value["isFavorite"],
+          imageUrl: value["imageUrl"],
+        ));
       });
       notifyListeners();
     } catch (error) {

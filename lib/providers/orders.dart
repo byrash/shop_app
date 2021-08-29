@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart';
 import 'package:shop_app/providers/cart.dart';
 
 class OrderItem {
@@ -21,15 +25,67 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
-  void addOrder(List<CartItem> cartProducts, double total) {
-    _orders.insert(
-        0,
-        OrderItem(
-          amount: total,
-          dateTime: DateTime.now(),
-          id: DateTime.now().toString(),
-          products: cartProducts,
+  Future<void> fetchAndSetOrders() async {
+    final ordersFireBaseUrl =
+        Uri.https(dotenv.env['FIREBASEURL']!, "/orders.json");
+    try {
+      var resp = await get(ordersFireBaseUrl);
+      if (json.decode(resp.body) == null) {
+        return;
+      }
+      final extarctedData = json.decode(resp.body) as Map<String, dynamic>;
+      final List<OrderItem> loadedOrders = [];
+      extarctedData.forEach((orderID, orderData) {
+        loadedOrders.add(OrderItem(
+          id: orderID,
+          amount: orderData['amount'],
+          dateTime: DateTime.parse(orderData['dateTime']),
+          products: (orderData['products'] as List<dynamic>)
+              .map((cartItem) => CartItem(
+                    id: cartItem["id"],
+                    title: cartItem["title"],
+                    quantity: cartItem["quantity"],
+                    price: cartItem["price"],
+                  ))
+              .toList(),
         ));
-    notifyListeners();
+      });
+      _orders = loadedOrders;
+      notifyListeners();
+    } on Exception catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> addOrder(List<CartItem> cartProducts, double total) async {
+    final ordersFireBaseUrl =
+        Uri.https(dotenv.env['FIREBASEURL']!, "/orders.json");
+    final ts = DateTime.now();
+    try {
+      var response = await post(ordersFireBaseUrl,
+          body: json.encode({
+            "amount": total,
+            "dateTime": ts.toIso8601String(),
+            "products": cartProducts
+                .map((cartItem) => {
+                      "id": cartItem.id,
+                      "title": cartItem.title,
+                      "quantity": cartItem.quantity,
+                      "price": cartItem.price,
+                    })
+                .toList()
+          }));
+      _orders.insert(
+          0,
+          OrderItem(
+            amount: total,
+            dateTime: ts,
+            id: json.decode(response.body)['name'],
+            products: cartProducts,
+          ));
+      notifyListeners();
+    } catch (error) {
+      rethrow;
+    }
   }
 }

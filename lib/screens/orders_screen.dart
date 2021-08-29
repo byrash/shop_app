@@ -4,9 +4,20 @@ import 'package:shop_app/providers/orders.dart' show Orders;
 import 'package:shop_app/widgets/app_drawer.dart';
 import 'package:shop_app/widgets/order_item.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends StatefulWidget {
   static const routeContextPath = "/orders";
   const OrdersScreen({Key? key}) : super(key: key);
+
+  @override
+  State<OrdersScreen> createState() => _OrdersScreenState();
+}
+
+class _OrdersScreenState extends State<OrdersScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<Orders>(context, listen: false).fetchAndSetOrders();
+  }
 
   @override
   Widget build(BuildContext context) {

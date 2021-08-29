@@ -40,25 +40,12 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Provider.of<Orders>(context, listen: false).addOrder(
-                        cartData.items.values.toList(),
-                        cartData.totalAmount,
-                      );
-                      cartData.clear();
-                    },
-                    child: Text(
-                      "Order Now",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  ),
+                  OrderButton(cartData: cartData),
                 ],
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Expanded(
@@ -78,6 +65,48 @@ class CartScreen extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key? key,
+    required this.cartData,
+  }) : super(key: key);
+
+  final Cart cartData;
+
+  @override
+  State<OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: (widget.cartData.totalAmount <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              await Provider.of<Orders>(context, listen: false).addOrder(
+                widget.cartData.items.values.toList(),
+                widget.cartData.totalAmount,
+              );
+              widget.cartData.clear();
+              setState(() {
+                _isLoading = false;
+              });
+            },
+      child: _isLoading
+          ? const CircularProgressIndicator()
+          : Text(
+              "Order Now",
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
     );
   }
 }

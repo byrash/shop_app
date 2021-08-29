@@ -61,6 +61,9 @@ class Products with ChangeNotifier {
   Future<void> fetchAndSetProducts() async {
     try {
       var resp = await http.get(productsFireBaseProductsUrl);
+      if (json.decode(resp.body) == null) {
+        return;
+      }
       var bodyData = json.decode(resp.body) as Map<String, dynamic>;
       _items.clear();
       bodyData.forEach((key, value) {

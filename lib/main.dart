@@ -33,7 +33,11 @@ class ShopApp extends StatelessWidget {
             create: (context) => Products(null, []),
           ),
           ChangeNotifierProvider(create: (ctx) => Cart()),
-          ChangeNotifierProvider(create: (ctx) => Orders()),
+          ChangeNotifierProxyProvider<Auth, Orders>(
+              update: (context, authValue, previousOrders) => Orders(
+                    authValue.token,
+                  ),
+              create: (ctx) => Orders(null)),
         ],
         child: Consumer<Auth>(
           builder: (context, authValue, child) => MaterialApp(

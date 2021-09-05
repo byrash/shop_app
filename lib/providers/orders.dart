@@ -20,6 +20,9 @@ class OrderItem {
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
+  final String? authToken;
+
+  Orders(this.authToken);
 
   List<OrderItem> get orders {
     return [..._orders];
@@ -27,7 +30,7 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSetOrders() async {
     final ordersFireBaseUrl =
-        Uri.parse(dotenv.env['FIREBASEURL']! + "/orders.json");
+        Uri.parse(dotenv.env['FIREBASEURL']! + "/orders.json?auth=$authToken");
     try {
       var resp = await get(ordersFireBaseUrl);
       if (json.decode(resp.body) == null) {
@@ -59,7 +62,7 @@ class Orders with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final ordersFireBaseUrl =
-        Uri.parse(dotenv.env['FIREBASEURL']! + "/orders.json");
+        Uri.parse(dotenv.env['FIREBASEURL']! + "/orders.json?auth=$authToken");
     final ts = DateTime.now();
     try {
       var response = await post(ordersFireBaseUrl,

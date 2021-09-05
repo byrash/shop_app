@@ -30,7 +30,7 @@ class Products with ChangeNotifier {
   Future<void> fetchAndSetProducts() async {
     try {
       final productsFireBaseProductsUrl = Uri.parse(
-          dotenv.env['FIREBASEURL']! + "/products.json?auth=" + authToken);
+          dotenv.env['FIREBASEURL']! + "/products.json?auth=$authToken");
       var resp = await http.get(productsFireBaseProductsUrl);
       if (json.decode(resp.body) == null) {
         return;
@@ -56,7 +56,7 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     try {
       final productsFireBaseProductsUrl = Uri.parse(
-          dotenv.env['FIREBASEURL']! + "/products.json?auth=" + authToken);
+          dotenv.env['FIREBASEURL']! + "/products.json?auth=$authToken");
       final resp = await http.post(productsFireBaseProductsUrl,
           body: json.encode({
             "title": product.title,
@@ -83,8 +83,8 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      final productsFireBasePatchUrl =
-          Uri.parse(dotenv.env['FIREBASEURL']! + "/products/$id.json");
+      final productsFireBasePatchUrl = Uri.parse(
+          dotenv.env['FIREBASEURL']! + "/products/$id.json?auth=$authToken");
       try {
         await http.patch(productsFireBasePatchUrl,
             body: json.encode({
@@ -104,8 +104,8 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final productsFireBasePatchUrl =
-        Uri.parse(dotenv.env['FIREBASEURL']! + "/products/$id.json");
+    final productsFireBasePatchUrl = Uri.parse(
+        dotenv.env['FIREBASEURL']! + "/products/$id.json?auth=$authToken");
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       try {

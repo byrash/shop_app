@@ -9,11 +9,12 @@ import 'product.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Products with ChangeNotifier {
-  final authToken;
+  final String? authToken;
+  final String? userId;
 
   final List<Product> _items;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   List<Product> get items {
     return [..._items];
@@ -35,15 +36,19 @@ class Products with ChangeNotifier {
       if (json.decode(resp.body) == null) {
         return;
       }
+      final productsFavFireBasePatchUrl = Uri.parse(dotenv.env['FIREBASEURL']! +
+          "/userFavorites/$userId.json?auth=$authToken");
+      var favResp = await http.get(productsFavFireBasePatchUrl);
+      var favData = json.decode(favResp.body);
       var bodyData = json.decode(resp.body) as Map<String, dynamic>;
       _items.clear();
-      bodyData.forEach((key, value) {
+      bodyData.forEach((prodId, value) {
         _items.add(Product(
-          id: key,
+          id: prodId,
           title: value["title"],
           description: value["description"],
           price: value["price"],
-          isFavorite: value["isFavorite"],
+          isFavorite: favData == null ? false : favData[prodId] ?? false,
           imageUrl: value["imageUrl"],
         ));
       });
@@ -63,7 +68,6 @@ class Products with ChangeNotifier {
             "description": product.description,
             "price": product.price,
             "imageUrl": product.imageUrl,
-            "isFavorite": product.isFavorite,
           }));
       final newProduct = Product(
         id: json.decode(resp.body)["name"],

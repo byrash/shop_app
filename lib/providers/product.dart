@@ -21,15 +21,15 @@ class Product with ChangeNotifier {
     this.isFavorite = false,
   });
 
-  Future<void> toggleFavoriteStatus(String? authToken) async {
+  Future<void> toggleFavoriteStatus(String? authToken, String? userId) async {
     isFavorite = !isFavorite;
-    final productsFireBasePatchUrl = Uri.parse(
-        dotenv.env['FIREBASEURL']! + "/products/$id.json?auth=$authToken");
+    final productsFavFireBasePatchUrl = Uri.parse(dotenv.env['FIREBASEURL']! +
+        "/userFavorites/$userId/$id.json?auth=$authToken");
     try {
-      await patch(productsFireBasePatchUrl,
-          body: json.encode({
-            'isFavorite': isFavorite,
-          }));
+      await put(productsFavFireBasePatchUrl,
+          body: json.encode(
+            isFavorite,
+          ));
       notifyListeners();
     } catch (error) {
       rethrow;

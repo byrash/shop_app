@@ -24,7 +24,7 @@ class Product with ChangeNotifier {
   Future<void> toggleFavoriteStatus() async {
     isFavorite = !isFavorite;
     final productsFireBasePatchUrl =
-        Uri.https(dotenv.env['FIREBASEURL']!, "/products/$id.json");
+        Uri.parse(dotenv.env['FIREBASEURL']! + "/products/$id.json");
     try {
       await patch(productsFireBasePatchUrl,
           body: json.encode({

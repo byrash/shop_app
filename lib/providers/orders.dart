@@ -27,7 +27,7 @@ class Orders with ChangeNotifier {
 
   Future<void> fetchAndSetOrders() async {
     final ordersFireBaseUrl =
-        Uri.https(dotenv.env['FIREBASEURL']!, "/orders.json");
+        Uri.parse(dotenv.env['FIREBASEURL']! + "/orders.json");
     try {
       var resp = await get(ordersFireBaseUrl);
       if (json.decode(resp.body) == null) {
@@ -59,7 +59,7 @@ class Orders with ChangeNotifier {
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final ordersFireBaseUrl =
-        Uri.https(dotenv.env['FIREBASEURL']!, "/orders.json");
+        Uri.parse(dotenv.env['FIREBASEURL']! + "/orders.json");
     final ts = DateTime.now();
     try {
       var response = await post(ordersFireBaseUrl,
